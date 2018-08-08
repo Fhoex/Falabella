@@ -27,27 +27,19 @@ Do While NOT archivo.AtEndOfStream
 	matriz	= split(archivo.ReadLine,",")
 	PortName = "ricoh_" & matriz(0)
 	HostAddress = matriz(0)
-	Protocol = matriz(1)
-	Queue = matriz(2)
-	PrinterName = matriz(3)
-	DriverName = matriz(4)
+	PrinterName = matriz(1)
+	DriverName = matriz(2)
 	BreakCapture = ""
-	objWSh.Run BullZip & " /PRINTERNAME=""" & matriz(4) & "", 0, True
+	objWSh.Run BullZip & " /PRINTERNAME=""" & matriz(1) & "", 0, True
 	
 	Do While BreakCapture <> "X"
 		BreakCapture = InputBox("Ingrese el tipo de cola (T1,T3,T4) o X para terminar",PrinterName & " SubQueue")
 		If BreakCapture <> "X" Then
-			If HostAddress <> "" And Protocol <> "" And Queue <> "" Then
-				objWSh.Run "cscript " & Path & Locale(0) & "\prnport.vbs -l -s " & Server & " -t -r " & PortName & " -h " & HostAddress & " -o " & Protocol & " -n " & Queue,0,True
-				End If
-			If PrinterName <> "" And DriverName <> "" Then
-				objWSh.Run "cscript " & Path & Locale(0) & "\prnmngr.vbs -a -s " & Server & " -p " & PrinterName & "_" & BreakCapture & " -m """ & DriverName & """ -r " & PortName,0,True '[-u UserName -w Password]
-				End If
-			If PrinterName <> "" Then
-				objWSh.Run "cscript " & Path & Locale(0) & "\prncnfg.vbs -t -s " & Server & " -p " & PrinterName & "_" & BreakCapture & "" & "" & "",0,True
-				End If
+			objWSh.Run "cscript " & Path & Locale(0) & "\prnport.vbs -l -s " & Server & " -t -r " & PortName & " -h " & HostAddress & " -o RAW -n 9100",0,True
+			objWSh.Run "cscript " & Path & Locale(0) & "\prnmngr.vbs -a -s " & Server & " -p " & PrinterName & "_" & BreakCapture & " -m """ & DriverName & """ -r " & PortName,0,True '[-u UserName -w Password]
+			objWSh.Run "cscript " & Path & Locale(0) & "\prncnfg.vbs -t -s " & Server & " -p " & PrinterName & "_" & BreakCapture & "" & "" & "",0,True
 			count = count + 1
-			For i=0 To 4 Step 1
+			For i=0 To 2 Step 1
 				matriz(i) = ""
 				Next
 			End If
